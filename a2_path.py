@@ -8,6 +8,12 @@ def safe(state):
     else:
         return False
     
+def tuptualstate(state):
+    tup=[]
+    for row in state.grid:
+        tup.append(tuple(row))
+    return tuple(tup)
+    
 def path_BFS(start,end):
     
     
