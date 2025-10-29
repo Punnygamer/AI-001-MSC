@@ -40,7 +40,31 @@ def path_BFS(start,end):
 
 
 def path_DFS(start,end):
-    return
+    if not safe(start) or not safe(end):
+        return None
+
+    start_t = tuptlestate(start)
+    end_t = tuptlestate(end)
+    visited = set()
+
+    def dfs(current, path):
+        key = tuptlestate(current)
+        if key in visited:
+            return None
+        visited.add(key)
+
+        if key == end_t:
+            return path
+
+        for next_state in current.moves():
+            if not safe(next_state):
+                continue
+            result = dfs(next_state, path + [tuptlestate(next_state)])
+            if result:
+                return result
+        return None
+
+    return dfs(start, [start_t])
 
 def path_IDDFS(start,end):
     return
