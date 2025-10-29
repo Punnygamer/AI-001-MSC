@@ -1,3 +1,16 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Hinger Project
+Coursework 001 for: CMP-7058A Artificial Intelligence
+
+Includes a State class for Task 1
+
+@author: C9 (100397)
+@date:   29/09/2025
+
+"""
+
 from copy import deepcopy
 from collections import deque
 
@@ -5,10 +18,18 @@ class state():
     def __init__(self, grid):
         self.grid = deepcopy(grid)
         self.rows = len(grid)
-        self.cols = len(grid[0]) if self.rows > 0 else 0
+        if self.rows > 0:
+            self.cols = len(grid[0])
+        else:
+            self.cols = 0
 
     def __str__(self):
-        return "\n".join(" ".join(str(cell) for cell in row) for row in self.grid)
+        string=""
+        for rows in self.grid:
+            for cell in rows:
+                string+=str(cell)+" "
+            string+="\n"
+        return string
 
     def in_bounds(self, i, j):
         return 0 <= i < self.rows and 0 <= j < self.cols
