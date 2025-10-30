@@ -16,37 +16,41 @@ import heapq
 from time import perf_counter
 import itertools
 
+#check if the current board doesnt have hingers; aka theres no immediate win
 def safe(state):
     if state.numHingers()== 0:
         return True
     else:
         return False
-    
-def tuptlestate(state):
+
+#converts the state into a tuple of tuples which can be used as a key 
+def tuplestate(State):
     tup=[]
-    for row in state.grid:
+    for row in State.grid:
         tup.append(tuple(row))
     return tuple(tup)
-    
+
+#the breadth first search algorithm
 def path_BFS(start,end):
+    #checks if the board doesnt have any hingers and wont result in any hingers
     if not safe(start) or not safe(end):
         return None
 
-    start_t = tuptlestate(start)
-    end_t = tuptlestate(end)
+    start_tup = tuplestate(start)
+    end_tup = tuplestate(end)
 
-    queue = deque([(start, [start_t])])
-    visited = {start_t}
+    queue = deque([(start, [start_tup])])
+    visited = {start_tup}
 
     while queue:
         current, path = queue.popleft()
-        if tuptlestate(current) == end_t:
+        if tuplestate(current) == end_tup:
             return path
 
         for next_state in current.moves():
             if not safe(next_state):
                 continue
-            key = tuptlestate(next_state)
+            key = tuplestate(next_state)
             if key not in visited:
                 visited.add(key)
                 queue.append((next_state, path + [key]))
@@ -57,43 +61,43 @@ def path_DFS(start,end):
     if not safe(start) or not safe(end):
         return None
 
-    start_t = tuptlestate(start)
-    end_t = tuptlestate(end)
+    start_tup = tuplestate(start)
+    end_tup = tuplestate(end)
     visited = set()
 
     def dfs(current, path):
-        key = tuptlestate(current)
+        key = tuplestate(current)
         if key in visited:
             return None
         visited.add(key)
 
-        if key == end_t:
+        if key == end_tup:
             return path
 
         for next_state in current.moves():
             if not safe(next_state):
                 continue
-            result = dfs(next_state, path + [tuptlestate(next_state)])
+            result = dfs(next_state, path + [tuplestate(next_state)])
             if result:
                 return result
         return None
 
-    return dfs(start, [start_t])
+    return dfs(start, [start_tup])
 
 def path_IDDFS(start,end,max_depth=10):
     if not safe(start) or not safe(end):
         return None
 
-    start_t = tuptlestate(start)
-    end_t = tuptlestate(end)
+    start_tup = tuplestate(start)
+    end_tup = tuplestate(end)
 
-    def dls(current,end_t,depth,path,visited):
-        key = tuptlestate(current)
+    def dls(current,end_tup,depth,path,visited):
+        key = tuplestate(current)
         if key in visited:
             return None
         visited.add(key)
 
-        if key ==end_t:
+        if key ==end_tup:
             return path
         if depth == 0:
             return None
@@ -101,15 +105,15 @@ def path_IDDFS(start,end,max_depth=10):
         for next_state in current.moves():
             if not safe(next_state):
                 continue
-            result = dls(next_state, end_t, depth - 1,
-                         path + [tuptlestate(next_state)], visited)
+            result = dls(next_state, end_tup, depth - 1,
+                         path + [tuplestate(next_state)], visited)
             if result:
                 return result
         return None
 
     for limit in range(max_depth + 1):
         visited = set()
-        result = dls(start, end_t, limit, [start_t], visited)
+        result = dls(start, end_tup, limit, [start_tup], visited)
         if result:
             return result
     return None
@@ -143,7 +147,7 @@ def path_astar(start, end):
                 came_from[next_tup] = current
                 g_score[next_tup] = tentative_g
 
-                
+
                 h = abs(current.numRegions() - end.numRegions())
                 f = tentative_g + h
                 heapq.heappush(open_set, (f, next(counter), next_state))
