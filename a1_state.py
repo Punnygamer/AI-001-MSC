@@ -14,7 +14,7 @@ Includes a State class for Task 1
 from copy import deepcopy
 from collections import deque
 
-class state():
+class State():
     def __init__(self, grid):
         self.grid = deepcopy(grid)
         self.rows = len(grid)
@@ -22,7 +22,7 @@ class state():
             self.cols = len(grid[0])
         else:
             self.cols = 0
-
+    
     def __str__(self):
         string=""
         for rows in self.grid:
@@ -52,7 +52,11 @@ class state():
                 if self.grid[i][j] > 0:
                     new_grid = deepcopy(self.grid)
                     new_grid[i][j] -= 1
-                    yield state(new_grid)
+                    yield State(new_grid)
+
+    def makemove(self,x,y):
+        self.grid[y][x]-=1
+        return
 
     def numRegions(self):
         visited = [[False] * self.cols for _ in range(self.rows)]
@@ -65,12 +69,13 @@ class state():
                     queue = deque([(i, j)])
                     visited[i][j] = True
                     while queue:
-                        ci, cj = queue.popleft()
-                        for ni, nj in self.adjacent_cells(ci, cj):
+                        ci,cj = queue.popleft()
+                        for ni,nj in self.adjacent_cells(ci, cj):
                             if self.is_active(ni, nj) and not visited[ni][nj]:
                                 visited[ni][nj] = True
                                 queue.append((ni, nj))
         return regions
+    
 
     def numHingers(self):
         count = 0
@@ -82,14 +87,18 @@ class state():
                     # Simulate removing this cell
                     new_grid = deepcopy(self.grid)
                     new_grid[i][j] = 0
-                    new_state = state(new_grid)
+                    new_state = State(new_grid)
                     new_regions = new_state.numRegions()
 
                     if new_regions > base_regions:
                         count += 1
         return count
+    
+    def to_tuple(self):
+        """Return an immutable representation of the grid for hashing/comparison."""
+        return tuple(tuple(row) for row in self.grid)
 
-'''
+
 def tester():
     print("=== Hinger Game: State Tester ===")
 
@@ -100,7 +109,7 @@ def tester():
         [0, 0, 0, 0, 0],
     ]
 
-    sa = state(sa_grid)
+    sa = State(sa_grid)
     print("State A:\n", sa)
     print("Number of regions:", sa.numRegions())
     print("Number of hingers:", sa.numHingers())
@@ -112,5 +121,5 @@ def tester():
 
     print("\nTester completed.")
 
-tester()
-'''
+if __name__ == "__main__":
+    tester()

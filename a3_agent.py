@@ -231,5 +231,5 @@ def tester():
 
     print("\nTester completed.")
 
-
-tester()
+if __name__ == "__main__":
+    tester()

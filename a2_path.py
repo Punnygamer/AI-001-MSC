@@ -9,10 +9,12 @@ Student Name: Joshua Galvao
 
 """
 
-from a1_state import state
+from a1_state import State
 from copy import deepcopy
 from collections import deque
 import heapq
+from time import perf_counter
+import itertools
 
 def safe(state):
     if state.numHingers()== 0:
@@ -85,13 +87,13 @@ def path_IDDFS(start,end,max_depth=10):
     start_t = tuptlestate(start)
     end_t = tuptlestate(end)
 
-    def dls(current, end_t, depth, path, visited):
+    def dls(current,end_t,depth,path,visited):
         key = tuptlestate(current)
         if key in visited:
             return None
         visited.add(key)
 
-        if key == end_t:
+        if key ==end_t:
             return path
         if depth == 0:
             return None
@@ -113,46 +115,114 @@ def path_IDDFS(start,end,max_depth=10):
     return None
 
 #Region difference heuristic
-def path_astar(start,end):
-
-    def heuristic(current, goal):
-        return abs(current.numRegions() - goal.numRegions())
-
+def path_astar(start, end):
+    """A* search between start and end."""
     open_set = []
-    heapq.heappush(open_set, (0, start))
-    came_from = {}
-    g_score = {start: 0}
+    counter = itertools.count()  # unique tie-breaker
 
-    visited = set()
+    heapq.heappush(open_set, (0, next(counter), start))
+    came_from = {}
+    g_score = {start.to_tuple(): 0}
 
     while open_set:
-        f, current = heapq.heappop(open_set)
-        if current.grid == end.grid:
-            path = []
-            while current in came_from:
-                current = came_from[current]
-                path.append(current)
-            return path[::-1]
+        _, _, current = heapq.heappop(open_set)
 
-        visited.add(current.to_tuple())
+        if current.to_tuple() == end.to_tuple():
+            # reconstruct path
+            path = [current.to_tuple()]
+            while current.to_tuple() in came_from:
+                current = came_from[current.to_tuple()]
+                path.append(current.to_tuple())
+            return list(reversed(path))
 
-        for next_state in current.moves(): 
-            if next_state.numHingers() > 0:
-                continue
+        for next_state in current.moves():
+            tentative_g = g_score[current.to_tuple()] + 1  # or move cost
+            next_tup = next_state.to_tuple()
 
-            key = next_state.to_tuple()
-            if key in visited:
-                continue
+            if tentative_g < g_score.get(next_tup, float('inf')):
+                came_from[next_tup] = current
+                g_score[next_tup] = tentative_g
 
-            tentative_g = g_score[current] + 1
-            if next_state not in g_score or tentative_g < g_score[next_state]:
-                g_score[next_state] = tentative_g
-                f_score = tentative_g + heuristic(next_state, end)
-                heapq.heappush(open_set, (f_score, next_state))
-                came_from[next_state] = current
+                # heuristic (example: region difference)
+                h = abs(current.numRegions() - end.numRegions())
+                f = tentative_g + h
+                heapq.heappush(open_set, (f, next(counter), next_state))
 
     return None
 
 #compares each algorithm
-def compare(state):
-    return
+def compare():
+    """Compare performance of BFS, DFS, IDDFS, and A* on example boards."""
+    # Simple 3x3 binary example
+    grid_start = [
+        [1, 1, 0],
+        [0, 1, 0],
+        [0, 0, 0],
+    ]
+    grid_end = [
+        [0, 1, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+    ]
+
+    start = State(grid_start)
+    end = State(grid_end)
+
+    algorithms = [
+        ("BFS", path_BFS),
+        ("DFS", path_DFS),
+        ("IDDFS", path_IDDFS),
+        ("A*", path_astar),
+    ]
+
+    print("=== Comparing Search Algorithms ===")
+    for name, func in algorithms:
+        t0 = perf_counter()
+        path = func(start, end)
+        t1 = perf_counter()
+        print(f"{name:6s} | Path found: {path is not None} | "
+              f"Length: {len(path) if path else 0:2d} | "
+              f"Time: {(t1 - t0)*1000:7.2f} ms")
+    print("===================================")
+
+def tester():
+    """Simple test harness for verifying path search algorithms."""
+    print("=== Hinger Path Tester ===")
+    grid_start = [
+        [1, 1, 0],
+        [0, 1, 0],
+        [0, 0, 0],
+    ]
+    grid_end = [
+        [0, 1, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+    ]
+
+    s1 = State(grid_start)
+    s2 = State(grid_end)
+
+    print("Start State:\n", s1)
+    print("End State:\n", s2)
+
+    print("\n--- Running BFS ---")
+    print(path_BFS(s1, s2))
+
+    print("\n--- Running DFS ---")
+    print(path_DFS(s1, s2))
+
+    print("\n--- Running IDDFS ---")
+    print(path_IDDFS(s1, s2))
+
+    print("\n--- Running A* ---")
+    print(path_astar(s1, s2))
+
+
+
+    print("\n--- Performance Comparison ---")
+    compare()
+
+
+
+if __name__ == "__main__":
+    tester()
