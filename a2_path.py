@@ -143,7 +143,7 @@ def path_astar(start, end):
                 came_from[next_tup] = current
                 g_score[next_tup] = tentative_g
 
-                # heuristic (example: region difference)
+                
                 h = abs(current.numRegions() - end.numRegions())
                 f = tentative_g + h
                 heapq.heappush(open_set, (f, next(counter), next_state))
