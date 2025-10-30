@@ -116,9 +116,6 @@ def path_IDDFS(start,end,max_depth=10):
 def path_astar(start,end):
 
     def heuristic(current, goal):
-        # Heuristic justification:
-        # h(current) = |numRegions(current) - numRegions(goal)|
-        # Admissible because each move can change region count by at most 1.
         return abs(current.numRegions() - goal.numRegions())
 
     open_set = []
@@ -131,7 +128,6 @@ def path_astar(start,end):
     while open_set:
         f, current = heapq.heappop(open_set)
         if current.grid == end.grid:
-            # reconstruct path
             path = []
             while current in came_from:
                 current = came_from[current]
@@ -140,23 +136,23 @@ def path_astar(start,end):
 
         visited.add(current.to_tuple())
 
-        for next_state in current.moves():  # all one-counter removals
+        for next_state in current.moves(): 
             if next_state.numHingers() > 0:
-                continue  # skip unsafe states
+                continue
 
             key = next_state.to_tuple()
             if key in visited:
                 continue
 
-            tentative_g = g_score[current] + 1  # cost of one move
+            tentative_g = g_score[current] + 1
             if next_state not in g_score or tentative_g < g_score[next_state]:
                 g_score[next_state] = tentative_g
                 f_score = tentative_g + heuristic(next_state, end)
                 heapq.heappush(open_set, (f_score, next_state))
                 came_from[next_state] = current
 
-    return None  # no path found
+    return None
 
-#compare everything
+#compares each algorithm
 def compare(state):
     return
