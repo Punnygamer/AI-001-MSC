@@ -33,7 +33,7 @@ def tuplestate(State):
 #the breadth first search algorithm
 def path_BFS(start,end):
     #checks if the board doesnt have any hingers and wont result in any hingers
-    if not safe(start) or not safe(end):
+    if safe(start) == False or safe(end)== False:
         return None
 
     start_tup = tuplestate(start)
@@ -43,12 +43,14 @@ def path_BFS(start,end):
     visited = {start_tup}
 
     while queue:
-        current, path = queue.popleft()
+        item = queue.popleft()
+        current = item[0]
+        path = item[1]
         if tuplestate(current) == end_tup:
             return path
 
         for next_state in current.moves():
-            if not safe(next_state):
+            if safe(next_state)==False:
                 continue
             key = tuplestate(next_state)
             if key not in visited:
@@ -58,7 +60,7 @@ def path_BFS(start,end):
 
 
 def path_DFS(start,end):
-    if not safe(start) or not safe(end):
+    if safe(start)==False or safe(end)==False:
         return None
 
     start_tup = tuplestate(start)
@@ -75,7 +77,7 @@ def path_DFS(start,end):
             return path
 
         for next_state in current.moves():
-            if not safe(next_state):
+            if safe(next_state)==False:
                 continue
             result = dfs(next_state, path + [tuplestate(next_state)])
             if result:
@@ -85,7 +87,7 @@ def path_DFS(start,end):
     return dfs(start, [start_tup])
 
 def path_IDDFS(start,end,max_depth=10):
-    if not safe(start) or not safe(end):
+    if safe(start)==False or safe(end)==False:
         return None
 
     start_tup = tuplestate(start)
@@ -103,7 +105,7 @@ def path_IDDFS(start,end,max_depth=10):
             return None
 
         for next_state in current.moves():
-            if not safe(next_state):
+            if safe(next_state)==False:
                 continue
             result = dls(next_state, end_tup, depth - 1,
                          path + [tuplestate(next_state)], visited)
@@ -120,9 +122,8 @@ def path_IDDFS(start,end,max_depth=10):
 
 #Region difference heuristic
 def path_astar(start, end):
-    """A* search between start and end."""
     open_set = []
-    counter = itertools.count()  # unique tie-breaker
+    counter = itertools.count()
 
     heapq.heappush(open_set, (0, next(counter), start))
     came_from = {}
@@ -132,7 +133,6 @@ def path_astar(start, end):
         _, _, current = heapq.heappop(open_set)
 
         if current.to_tuple() == end.to_tuple():
-            # reconstruct path
             path = [current.to_tuple()]
             while current.to_tuple() in came_from:
                 current = came_from[current.to_tuple()]
@@ -140,7 +140,7 @@ def path_astar(start, end):
             return list(reversed(path))
 
         for next_state in current.moves():
-            tentative_g = g_score[current.to_tuple()] + 1  # or move cost
+            tentative_g = g_score[current.to_tuple()] + 1
             next_tup = next_state.to_tuple()
 
             if tentative_g < g_score.get(next_tup, float('inf')):
@@ -209,21 +209,21 @@ def tester():
     print("Start State:\n", s1)
     print("End State:\n", s2)
 
-    print("\n--- Running BFS ---")
+    print("\n BFS---------------------------")
     print(path_BFS(s1, s2))
 
-    print("\n--- Running DFS ---")
+    print("\n DFS---------------------")
     print(path_DFS(s1, s2))
 
-    print("\n--- Running IDDFS ---")
+    print("\n IDDFS-----------------------")
     print(path_IDDFS(s1, s2))
 
-    print("\n--- Running A* ---")
+    print("\n A*----------------------------")
     print(path_astar(s1, s2))
 
 
 
-    print("\n--- Performance Comparison ---")
+    print("\nComparison -------------------")
     compare()
 
 
