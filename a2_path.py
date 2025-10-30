@@ -12,9 +12,10 @@ Student Name: Joshua Galvao
 from a1_state import state
 from copy import deepcopy
 from collections import deque
+import heapq
 
 def safe(state):
-    if state.numHingers== 0:
+    if state.numHingers()== 0:
         return True
     else:
         return False
@@ -111,8 +112,51 @@ def path_IDDFS(start,end,max_depth=10):
             return result
     return None
 
+#Region difference heuristic
 def path_astar(start,end):
-    return
 
+    def heuristic(current, goal):
+        # Heuristic justification:
+        # h(current) = |numRegions(current) - numRegions(goal)|
+        # Admissible because each move can change region count by at most 1.
+        return abs(current.numRegions() - goal.numRegions())
+
+    open_set = []
+    heapq.heappush(open_set, (0, start))
+    came_from = {}
+    g_score = {start: 0}
+
+    visited = set()
+
+    while open_set:
+        f, current = heapq.heappop(open_set)
+        if current.grid == end.grid:
+            # reconstruct path
+            path = []
+            while current in came_from:
+                current = came_from[current]
+                path.append(current)
+            return path[::-1]
+
+        visited.add(current.to_tuple())
+
+        for next_state in current.moves():  # all one-counter removals
+            if next_state.numHingers() > 0:
+                continue  # skip unsafe states
+
+            key = next_state.to_tuple()
+            if key in visited:
+                continue
+
+            tentative_g = g_score[current] + 1  # cost of one move
+            if next_state not in g_score or tentative_g < g_score[next_state]:
+                g_score[next_state] = tentative_g
+                f_score = tentative_g + heuristic(next_state, end)
+                heapq.heappush(open_set, (f_score, next_state))
+                came_from[next_state] = current
+
+    return None  # no path found
+
+#compare everything
 def compare(state):
     return

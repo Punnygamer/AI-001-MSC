@@ -89,7 +89,7 @@ class state():
                         count += 1
         return count
 
-
+'''
 def tester():
     print("=== Hinger Game: State Tester ===")
 
@@ -113,3 +113,4 @@ def tester():
     print("\nTester completed.")
 
 tester()
+'''
