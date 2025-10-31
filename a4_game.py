@@ -14,7 +14,7 @@ Student Name: Maiusana Suthesan
 import time
 from copy import deepcopy
 from a3_agent import agent
-from a1_state import state
+from a1_state import State
 
 
 
@@ -32,9 +32,9 @@ def is_legal_move(st, move):
 def play(st, agentA, agentB, modeA="alphabeta", modeB="alphabeta", time_limit=60, log_file="game_log.txt"):
     
     if hasattr(st, "grid"):
-        current_state = state(st.grid)
+        current_state = State(st.grid)
     else:
-        current_state = state(st)
+        current_state = State(st)
 
     move_history = []
     total_time = {"A": 0.0, "B": 0.0}
@@ -49,7 +49,7 @@ def play(st, agentA, agentB, modeA="alphabeta", modeB="alphabeta", time_limit=60
         current_regions = state_obj.numRegions()
         new_grid = deepcopy(state_obj.grid)
         new_grid[r][c] = 0
-        new_state = state(new_grid)
+        new_state = State(new_grid)
         new_regions = new_state.numRegions()
         
         return new_regions > current_regions
@@ -73,7 +73,7 @@ def play(st, agentA, agentB, modeA="alphabeta", modeB="alphabeta", time_limit=60
     def game_over():
         return len(available_moves()) == 0
 
-    print("Initial state:")
+    print("Initial State:")
     print(current_state)
 
     turn = 0
@@ -192,7 +192,7 @@ def tester():
         [0, 1, 0],
         [1, 0, 1]
     ]
-    state1 = state(grid1)
+    state1 = State(grid1)
 
    
     agentA = agent((3, 3), name="AlphaBot")
@@ -218,7 +218,7 @@ def tester():
         [0, 0, 1, 1, 1],
         [0, 0, 0, 1, 1]
     ]
-    state2 = state(grid2)
+    state2 = State(grid2)
 
     agent_large_A = agent((4, 5), name="LargeBot-A")
     agent_large_B = agent((4, 5), name="LargeBot-B")
@@ -244,7 +244,7 @@ def tester():
         [1, 1],
         [1, 0]
     ]
-    state3 = state(grid3)
+    state3 = State(grid3)
 
     agent_fast_A = agent((2, 2), name="FastBot-A")
     agent_fast_B = agent((2, 2), name="FastBot-B")
@@ -265,8 +265,8 @@ def tester():
     print("Expected: play() function supports agentB=None for human player")
     print()
     print("Human player support: Implemented")
-    print("  Usage: play(state, agentA=None, agentB=agent) for Human vs AI")
-    print("  Usage: play(state, agentA=None, agentB=None) for Human vs Human")
+    print("  Usage: play(State, agentA=None, agentB=agent) for Human vs AI")
+    print("  Usage: play(State, agentA=None, agentB=None) for Human vs Human")
     print()
 
    
