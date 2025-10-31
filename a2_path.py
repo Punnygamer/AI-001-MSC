@@ -3,9 +3,10 @@ Hinger Project
 Coursework 001 for: CMP-7058A Artificial Intelligence
 
 Includes a Search algorithms for task 2
-Group no: C9
-Student ID : 100397265
-Student Name: Joshua Galvao
+
+Group: C9
+Student ID: 100538270, 100397265
+Student Name: Maiusana Suthesan, Joshua Galvao
 
 """
 

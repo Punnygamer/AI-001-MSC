@@ -6,8 +6,9 @@ Coursework 001 for: CMP-7058A Artificial Intelligence
 
 Includes a State class for Task 1
 
-@author: C9 (100397265 Joshua Galvao)
-@date:   29/09/2025
+Group: C9
+Student ID: 100538270, 100397265
+Student Name: Maiusana Suthesan, Joshua Galvao
 
 """
 

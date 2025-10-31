@@ -1,151 +1,288 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -- coding: utf-8 --
+
 """
 Hinger Project
 Coursework 001 for: CMP-7058A Artificial Intelligence
-
 Includes game play function for Task 3
 
-Student ID: 100538270
-Student Name: Maiusana Suthesan
+Group: C9
+Student ID: 100538270, 100397265
+Student Name: Maiusana Suthesan, Joshua Galvao
 
 """
 
+
+
 from copy import deepcopy
+
 import random
+
 from functools import lru_cache
-from a1_state import State
+
+from a1_state import state
+
  
+
 # initialising the two parameters (Q.a)
+
 class agent:
-    def __init__(self, size, name="Agent"):
-        self.size = size  
-        self.name = name  
-        self.modes = ["minimax", "alphabeta", "mcts"]  
-        self.default_depth = 6  
-        self.mcts_playouts = 200  
 
-    # sensible Method (Q.b)
-    def __str__(self):
-        return f"Agent(name={self.name}, size={self.size})"
+  def _init_(self, size, name="Agent"):
 
-    # utility method (Q.f)
-    @staticmethod
-    def _get_grid(st):
-        if hasattr(st, "grid"):
-            return deepcopy(st.grid)
-        else:
-            return deepcopy(st)
+    self.size = size  
 
-    @staticmethod
-    def active_moves(grid):
-        moves = []
-        for i in range(len(grid)):
-            for j in range(len(grid[0])):
-                if grid[i][j] > 0:
-                    moves.append((i, j))
-        return moves
+    self.name = name  
 
-    @staticmethod
-    def apply_move(grid, move):
-        g = deepcopy(grid)
-        r, c = move
-        if g[r][c] > 0:
-            g[r][c] -= 1
-        return g
+    self.modes = ["minimax", "alphabeta", "mcts"]  
 
-    @staticmethod
-    def is_terminal(grid):
-        return len(agent.active_moves(grid)) == 0
+    self.default_depth = 6  
 
-    @staticmethod
-    def heuristic(grid):
-        total = 0
-        for row in grid:
-            for val in row:
-                if val > 0:
-                    total += val
-        return total
+    self.mcts_playouts = 200  
+
+
+
+  # sensible Method (Q.b)
+
+  def _str_(self):
+
+    return f"Agent(name={self.name}, size={self.size})"
+
+
+
+  # utility method (Q.f)
+
+  @staticmethod
+
+  def _get_grid(st):
+
+    if hasattr(st, "grid"):
+
+      return deepcopy(st.grid)
+
+    else:
+
+      return deepcopy(st)
+
+
+
+  @staticmethod
+
+  def active_moves(grid):
+
+    moves = []
+
+    for i in range(len(grid)):
+
+      for j in range(len(grid[0])):
+
+        if grid[i][j] > 0:
+
+          moves.append((i, j))
+
+    return moves
+
+
+
+  @staticmethod
+
+  def apply_move(grid, move):
+
+    g = deepcopy(grid)
+
+    r, c = move
+
+    if g[r][c] > 0:
+
+      g[r][c] -= 1
+
+    return g
+
+
+
+  @staticmethod
+
+  def is_terminal(grid):
+
+    return len(agent.active_moves(grid)) == 0
+
+
+
+  @staticmethod
+
+  def heuristic(grid):
+
+    total = 0
+
+    for row in grid:
+
+      for val in row:
+
+        if val > 0:
+
+          total += val
+
+    return total
+
+
+
+  
+
+  # minimax algorithm (Q.d)
+
+  def _minimax(self, grid, depth, maximizing):
+
+    if self.is_terminal(grid):
+
+      return -1, None  
+
+    if depth == 0:
+
+      return 0, None  
+
+     
+
+    best_move = None
+
+    if maximizing:
+
+      best_score = -2 
+
+      for mv in self.active_moves(grid):
+
+        nxt = self.apply_move(grid, mv)
+
+        score, _ = self._minimax(nxt, depth - 1, False)
+
+        score = -score  
+
+        if score > best_score:
+
+          best_score = score
+
+          best_move = mv
+
+          if best_score == 1:  
+
+            break
+
+      return best_score, best_move
+
+    else:
+
+      best_score = 2  
+
+      for mv in self.active_moves(grid):
+
+        nxt = self.apply_move(grid, mv)
+
+        score, _ = self._minimax(nxt, depth - 1, True)
+
+        score = -score  
+
+        if score < best_score:
+
+          best_score = score
+
+          best_move = mv
+
+          if best_score == -1:  
+
+            break
+
+      return best_score, best_move
+
+
+
+
+
+  def minimax_move(self, st, depth=None):
+
+    if depth is None:
+
+      depth = self.default_depth
+
+    grid = self._get_grid(st)
+
+    if self.is_terminal(grid):
+
+      return None #
+
+    score, mv = self._minimax(grid, depth, True)
+
+    return mv
+
+
 
    
-    #  minimax algorithm (Q.d)
-    def _minimax(self, grid, depth, maximizing):
-        if self.is_terminal(grid):
-            return -1, None  
-        if depth == 0:
-            return 0, None  
-        
-        best_move = None
-        if maximizing:
-            best_score = -2 
-            for mv in self.active_moves(grid):
-                nxt = self.apply_move(grid, mv)
-                score, _ = self._minimax(nxt, depth - 1, False)
-                score = -score  
-                if score > best_score:
-                    best_score = score
-                    best_move = mv
-                    if best_score == 1:  
-                        break
-            return best_score, best_move
-        else:
-            best_score = 2  
-            for mv in self.active_moves(grid):
-                nxt = self.apply_move(grid, mv)
-                score, _ = self._minimax(nxt, depth - 1, True)
-                score = -score  
-                if score < best_score:
-                    best_score = score
-                    best_move = mv
-                    if best_score == -1:  
-                        break
-            return best_score, best_move
+
+  # alpha-beta algorithm(Q.d)
+
+  def _alphabeta(self, grid, depth, alpha, beta, maximizing):
+
+    if self.is_terminal(grid):
+
+      return -1, None  
+
+    if depth == 0:
+
+      return 0, None  
 
 
-    def minimax_move(self, st, depth=None):
-        if depth is None:
-            depth = self.default_depth
-        grid = self._get_grid(st)
-        if self.is_terminal(grid):
-            return None  #
-        score, mv = self._minimax(grid, depth, True)
-        return mv
 
-    
-    # alpha-beta algorithm(Q.d)
-    def _alphabeta(self, grid, depth, alpha, beta, maximizing):
-        if self.is_terminal(grid):
-            return -1, None  
-        if depth == 0:
-            return 0, None  
+    best_move = None
 
-        best_move = None
-        if maximizing:
-            value = -2  
-            for mv in self.active_moves(grid):
-                nxt = self.apply_move(grid, mv)
-                score, _ = self._alphabeta(nxt, depth - 1, alpha, beta, False)
-                score = -score  
-                if score > value:
-                    value = score
-                    best_move = mv
-                alpha = max(alpha, value)  
-                if alpha >= beta: 
-                    break
-            return value, best_move
-        else:
-            value = 2  
-            for mv in self.active_moves(grid):
-                nxt = self.apply_move(grid, mv)
-                score, _ = self._alphabeta(nxt, depth - 1, alpha, beta, True)
-                score = -score  
-                if score < value:
-                    value = score
-                    best_move = mv
-                beta = min(beta, value)  
-                if alpha >= beta:  
-                    break
-            return value, best_move
+    if maximizing:
+
+      value = -2  
+
+      for mv in self.active_moves(grid):
+
+        nxt = self.apply_move(grid, mv)
+
+        score, _ = self._alphabeta(nxt, depth - 1, alpha, beta, False)
+
+        score = -score  
+
+        if score > value:
+
+          value = score
+
+          best_move = mv
+
+        alpha = max(alpha, value)  
+
+        if alpha >= beta: 
+
+          break
+
+      return value, best_move
+
+    else:
+
+      value = 2  
+
+      for mv in self.active_moves(grid):
+
+        nxt = self.apply_move(grid, mv)
+
+        score, _ = self._alphabeta(nxt, depth - 1, alpha, beta, True)
+
+        score = -score  
+
+        if score < value:
+
+          value = score
+
+          best_move = mv
+
+        beta = min(beta, value)  
+
+        if alpha >= beta:  
+
+          break
+
+      return value, best_move
 
     
     def alphabeta_move(self, st, depth=None):

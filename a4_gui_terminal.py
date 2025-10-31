@@ -7,6 +7,9 @@ Coursework 001 for: CMP-7058A Artificial Intelligence
 TASK 4b: GUI Visualization using Pygame (ALLOWED library)
 Provides a desktop window interface for playing the Hinger game
 
+Group: C9
+Student ID: 100538270, 100397265
+Student Name: Maiusana Suthesan, Joshua Galvao
 
 """
 
