@@ -75,6 +75,7 @@ def play(st, agentA, agentB, modeA="alphabeta", modeB="alphabeta", time_limit=60
     def game_over():
         return len(available_moves()) == 0
 
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------
     print("Initial State:")
     print(current_state)
 
@@ -171,7 +172,7 @@ def play(st, agentA, agentB, modeA="alphabeta", modeB="alphabeta", time_limit=60
     print(f"Log saved to: {log_file}")
 
     return winner
-
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def tester():
     print("=== Hinger Game: Play Tester ===\n")

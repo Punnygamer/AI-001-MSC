@@ -136,14 +136,14 @@ class agent:
                         break
             return best_score, best_move
 
-    
+    #--------------------------------------------------------------------------------------------------------------------------------------
     def minimax_move(self, st, depth=None):
         if depth is None:
             depth = self.default_depth
         grid = self._get_grid(st)
-        if self.is_terminal(grid):
+        if self.is_terminal(grid)==True:
             return None  
-        score, mv = self._minimax(grid, depth, True)
+        score ,mv = self._minimax(grid, depth, True)
         return mv
 
     def _alphabeta(self, grid, depth, alpha, beta, maximizing):
@@ -240,7 +240,7 @@ class agent:
             return self.alphabeta_move(grid)  
 
 def tester():
-    print("=== Hinger Game: Agent Tester ===\n")
+    print("Agent Test\n")
     ag = agent((3, 4), name="TestAgent")
     print(ag)  
 
@@ -262,7 +262,7 @@ def tester():
     print("Minimax move:", mv_mm)
     print("MCTS move:", mv_mcts)
 
-    print("\nTester completed.")
+    print("\nTest completed.")
 
 if __name__ == "__main__":
     tester()
