@@ -1,0 +1,125 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Hinger Project
+Coursework 001 for: CMP-7058A Artificial Intelligence
+
+Includes a State class for Task 1
+
+@author: C9 (100397)
+@date:   29/09/2025
+
+"""
+
+from copy import deepcopy
+from collections import deque
+
+class State():
+    def __init__(self, grid):
+        self.grid = deepcopy(grid)
+        self.rows = len(grid)
+        if self.rows > 0:
+            self.cols = len(grid[0])
+        else:
+            self.cols = 0
+    
+    def __str__(self):
+        string=""
+        for rows in self.grid:
+            for cell in rows:
+                string+=str(cell)+" "
+            string+="\n"
+        return string
+
+    def in_bounds(self, i, j):
+        return 0 <= i < self.rows and 0 <= j < self.cols
+
+    def adjacent_cells(self, i, j):
+        for di in [-1, 0, 1]:
+            for dj in [-1, 0, 1]:
+                if di == 0 and dj == 0:
+                    continue
+                ni, nj = i + di, j + dj
+                if self.in_bounds(ni, nj):
+                    yield (ni, nj)
+
+    def is_active(self, i, j):
+        return self.grid[i][j] > 0
+
+    def moves(self):
+        for i in range(self.rows):
+            for j in range(self.cols):
+                if self.grid[i][j] > 0:
+                    new_grid = deepcopy(self.grid)
+                    new_grid[i][j] -= 1
+                    yield State(new_grid)
+
+    def makemove(self,x,y):
+        self.grid[y][x]-=1
+        return
+
+    def numRegions(self):
+        visited = [[False] * self.cols for _ in range(self.rows)]
+        regions = 0
+
+        for i in range(self.rows):
+            for j in range(self.cols):
+                if self.is_active(i, j) and not visited[i][j]:
+                    regions += 1
+                    queue = deque([(i, j)])
+                    visited[i][j] = True
+                    while queue:
+                        ci,cj = queue.popleft()
+                        for ni,nj in self.adjacent_cells(ci, cj):
+                            if self.is_active(ni, nj) and not visited[ni][nj]:
+                                visited[ni][nj] = True
+                                queue.append((ni, nj))
+        return regions
+    
+
+    def numHingers(self):
+        count = 0
+        base_regions = self.numRegions()
+
+        for i in range(self.rows):
+            for j in range(self.cols):
+                if self.grid[i][j] == 1:
+                    # Simulate removing this cell
+                    new_grid = deepcopy(self.grid)
+                    new_grid[i][j] = 0
+                    new_state = State(new_grid)
+                    new_regions = new_state.numRegions()
+
+                    if new_regions > base_regions:
+                        count += 1
+        return count
+    
+    def to_tuple(self):
+        """Return an immutable representation of the grid for hashing/comparison."""
+        return tuple(tuple(row) for row in self.grid)
+
+
+def tester():
+    print("=== Hinger Game: State Tester ===")
+
+    sa_grid = [
+        [0, 1, 0, 0, 2],
+        [1, 1, 0, 0, 0],
+        [0, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0],
+    ]
+
+    sa = State(sa_grid)
+    print("State A:\n", sa)
+    print("Number of regions:", sa.numRegions())
+    print("Number of hingers:", sa.numHingers())
+
+    print("\nPossible next states (1-move each):")
+    for idx, next_state in enumerate(sa.moves(), 1):
+        print(f"\nMove {idx}:")
+        print(next_state)
+
+    print("\nTester completed.")
+
+if __name__ == "__main__":
+    tester()
