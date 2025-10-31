@@ -125,8 +125,11 @@ class State():
         return count
     
     '''returns a tupple of the grid'''
+    
     def to_tuple(self):
-        result=deepcopy(self.grid)
+        result = []
+        for row in self.grid:
+            result.append(tuple(row))
         return tuple(result)
 
 

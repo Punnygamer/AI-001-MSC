@@ -6,7 +6,7 @@ Coursework 001 for: CMP-7058A Artificial Intelligence
 
 Includes a State class for Task 1
 
-Group: C9
+Group C9
 Student ID: 100538270, 100397265
 Student Name: Maiusana Suthesan, Joshua Galvao
 
@@ -126,9 +126,10 @@ class State():
     
     '''returns a tupple of the grid'''
     def to_tuple(self):
-        result=deepcopy(self.grid)
+        result = []
+        for row in self.grid:
+            result.append(tuple(row))
         return tuple(result)
-
 
 def statetest():
     print("State Class test")
