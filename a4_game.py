@@ -19,7 +19,7 @@ from a1_state import State
 
 
 # Implements 
-def is_legal_move(st, move):
+def legalmove(st, move):
     grid = st.grid if hasattr(st, "grid") else st
     r, c = move
     return (
@@ -36,20 +36,20 @@ def play(st, agentA, agentB, modeA="alphabeta", modeB="alphabeta", time_limit=60
     else:
         current_state = State(st)
 
-    move_history = []
+    history = []
     total_time = {"A": 0.0, "B": 0.0}
     move_count = {"A": 0, "B": 0}
 
     
-    def is_hinger_move(state_obj, move):
+    def is_hinger_move(stateobj, move):
         r, c = move
-        if state_obj.grid[r][c] != 1:
+        if stateobj.grid[r][c] != 1:
             return False
 
-        current_regions = state_obj.numRegions()
-        new_grid = deepcopy(state_obj.grid)
-        new_grid[r][c] = 0
-        new_state = State(new_grid)
+        current_regions = stateobj.numRegions()
+        newgrid = deepcopy(stateobj.grid)
+        newgrid[r][c] = 0
+        new_state = State(newgrid)
         new_regions = new_state.numRegions()
         
         return new_regions > current_regions
@@ -71,13 +71,19 @@ def play(st, agentA, agentB, modeA="alphabeta", modeB="alphabeta", time_limit=60
 
 
     def game_over():
-        return len(available_moves()) == 0
+        if len(available_moves()) == 0:
+            return True
+        else:
+            return False
+        
+    #---
+
 
     print("Initial State:")
     print(current_state)
 
-    turn = 0
-    winner = None
+    turn =0
+    winner= None
     start_time = time.time()
 
    
@@ -87,12 +93,18 @@ def play(st, agentA, agentB, modeA="alphabeta", modeB="alphabeta", time_limit=60
 
         
         while True:
-            player = "A" if turn % 2 == 0 else "B"
-            current_agent = agentA if player == "A" else agentB
-            mode = modeA if player == "A" else modeB
-            print(f"\n--- Player {player}'s Turn ---")
+            if turn % 2 == 0:
+                player = "A"
+                current_agent=agentA
+                mode=modeA
+            else: 
+                player="B"
+                current_agent=agentB
+                mode=modeB
 
-            if game_over():
+            print("\n--- Player ",player,"'s Turn ---")
+
+            if game_over()== True:
                 print("No moves left - Draw!")
                 winner = None
                 break
@@ -110,7 +122,7 @@ def play(st, agentA, agentB, modeA="alphabeta", modeB="alphabeta", time_limit=60
                     break
             else:
                 move = current_agent.move(current_state, mode)
-                print(f"{current_agent.name} chooses {move}")
+                print(current_agent.name," chooses ",move)
 
            
             elapsed = time.time() - t0
@@ -118,29 +130,33 @@ def play(st, agentA, agentB, modeA="alphabeta", modeB="alphabeta", time_limit=60
             move_count[player] += 1
 
             if elapsed > time_limit:
-                print(f"Player {player} exceeded time limit!")
-                winner = "B" if player == "A" else "A"
-                break
+                print("Player ",player," exceeded time limit!")
+                if player == "A":
+                    winner="B"
+                    break
+                else:
+                    winner="A"
+                    break
 
           
-            if not move or not is_legal_move(current_state, move):
-                print(f"Illegal move! Opponent wins.")
+            if not move or legalmove(current_state, move)==False:
+                print("Illegal move! Opponent wins.")
                 winner = "B" if player == "A" else "A"
                 break
 
             
-            hinger_triggered = is_hinger_move(current_state, move)
+            hingTriggered = is_hinger_move(current_state, move)
             apply_move(move)
-            move_history.append((player, move))
+            history.append((player, move))
 
-            print(f"State after Player {player}'s move:")
+            print("State after Player",player,"'s move:")
             print(current_state)
 
        
-            f.write(f"Turn {len(move_history)}: Player {player} -> {move}\n")
+            f.write(f"Turn {len(history)}: Player {player} -> {move}\n")
 
             
-            if hinger_triggered:
+            if hingTriggered==True:
                 print(f"HINGER at {move}! Player {player} wins!")
                 winner = player
                 break
@@ -170,9 +186,9 @@ def play(st, agentA, agentB, modeA="alphabeta", modeB="alphabeta", time_limit=60
         
         print("Draw")
 
-    print(f"Moves: A={move_count['A']} | B={move_count['B']}")
-    print(f"Time: A={total_time['A']:.2f}s | B={total_time['B']:.2f}s")
-    print(f"Log saved to: {log_file}")
+    print("Moves: A=",move_count['A']," | B= ",move_count['B'])
+    print("Time: A=",total_time['A'],"s | B=",total_time['B'],"s")
+    print("Log saved to: ",log_file)
 
     return winner
 
@@ -220,14 +236,14 @@ def tester():
     ]
     state2 = State(grid2)
 
-    agent_large_A = agent((4, 5), name="LargeBot-A")
-    agent_large_B = agent((4, 5), name="LargeBot-B")
+    large_A = agent((4, 5), name="LargeBot-A")
+    large_B = agent((4, 5), name="LargeBot-B")
     print()
 
     print("Starting game on larger board...")
     print()
 
-    winner2 = play(state2, agent_large_A, agent_large_B, modeA="alphabeta",
+    winner2 = play(state2, large_A, large_B, modeA="alphabeta",
                    modeB="alphabeta", time_limit=30, log_file="test2_log.txt")
 
     print()
@@ -246,10 +262,10 @@ def tester():
     ]
     state3 = State(grid3)
 
-    agent_fast_A = agent((2, 2), name="FastBot-A")
-    agent_fast_B = agent((2, 2), name="FastBot-B")
+    fast_A = agent((2, 2), name="FastBot-A")
+    fast_B = agent((2, 2), name="FastBot-B")
 
-    winner3 = play(state3, agent_fast_A, agent_fast_B, modeA="minimax",
+    winner3 = play(state3, fast_A, fast_B, modeA="minimax",
                    modeB="minimax", time_limit=30, log_file="test3_log.txt")
 
     print()
