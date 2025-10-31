@@ -74,7 +74,7 @@ class agent:
                     total += val
         return total
     
-    #fallback to use one of the safe search algorithms
+    #fallback to use one of the safe search algorithms so that the next move can be guarrentied safe
     def safemove(self,grid,type):
         s = State(grid)
         row= len(s.grid)
