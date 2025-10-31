@@ -14,8 +14,8 @@ Student Name: Maiusana Suthesan
 from copy import deepcopy
 import random
 from functools import lru_cache
-from a1_state import state
-import a2_path
+from a1_state import State
+from a2_path import *
 
 class agent:
     
@@ -73,8 +73,38 @@ class agent:
                 if val > 0:
                     total += val
         return total
+    
+    #fallback to use one of the safe search algorithms
+    def safemove(self,grid,type):
+        s = State(grid)
+        row= len(s.grid)
+        col= len(s.grid[0])
+        goal_grid = []
+        for i in range(row):
+            row = []
+            for j in range(col):
+                row.append(0)
+            goal_grid.append(row)
 
     
+        goal = State(goal_grid)
+        if type == 1:
+            path = path_BFS(s, goal)
+        elif type==2:
+            path = path_DFS(s,goal)
+        elif type == 3:
+            path= path_IDDFS(s,goal)
+        elif type ==4:
+            path_astar(s,goal)
+        else:
+            path = path_BFS(s, goal)
+
+        
+        if path and len(path) > 1:
+            next_state = path[1]
+            return self.find_move(s.grid, next_state)
+        return None
+
     def _minimax(self, grid, depth, maximizing):
         if self.is_terminal(grid):
             return -1, None 
@@ -220,7 +250,7 @@ def tester():
         [1, 1, 1, 1]
     ]
 
-    state1 = state(board1)
+    state1 = State(board1)
 
     print("\nBoard:")
     print(state1)
