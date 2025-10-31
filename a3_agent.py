@@ -15,13 +15,16 @@ from copy import deepcopy
 import random
 from functools import lru_cache
 from a1_state import state
+import a2_path
 
 class agent:
     
     def __init__(self, size, name="Agent"):
         self.size = size  
         self.name = name  
-        self.modes = ["minimax", "alphabeta", "mcts"]  
+        self.modes = ["minimax", "alphabeta", "mcts"]
+        self.fallback=["bfs","dfs","iddfs","a"]
+        self.fallbnum=0
         self.default_depth = 6  
         self.mcts_playouts = 200  
 

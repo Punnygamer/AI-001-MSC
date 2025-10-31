@@ -156,8 +156,6 @@ def path_astar(start, end):
 
 #compares each algorithm
 def compare():
-    """Compare performance of BFS, DFS, IDDFS, and A* on example boards."""
-    # Simple 3x3 binary example
     grid_start = [
         [1, 1, 0],
         [0, 1, 0],
@@ -179,7 +177,7 @@ def compare():
         ("A*", path_astar),
     ]
 
-    print("=== Comparing Search Algorithms ===")
+    print("Comparing Search Algorithms\n")
     for name, func in algorithms:
         t0 = perf_counter()
         path = func(start, end)
@@ -187,10 +185,9 @@ def compare():
         print(f"{name:6s} | Path found: {path is not None} | "
               f"Length: {len(path) if path else 0:2d} | "
               f"Time: {(t1 - t0)*1000:7.2f} ms")
-    print("===================================")
+    print("//////////////////////////////////////////////////////////////////////////////")
 
 def tester():
-    """Simple test harness for verifying path search algorithms."""
     print("=== Hinger Path Tester ===")
     grid_start = [
         [1, 1, 0],
