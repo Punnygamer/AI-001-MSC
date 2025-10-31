@@ -6,7 +6,7 @@ Coursework 001 for: CMP-7058A Artificial Intelligence
 
 Includes a State class for Task 1
 
-@author: C9 (100397)
+@author: C9 (100397265 Joshua Galvao)
 @date:   29/09/2025
 
 """
@@ -40,29 +40,31 @@ class State():
         else:
             return False
     
-    #returns all cells ajacent to the coordinates of the current one
+    #returns all cells ajacent to the coordinates of the current one 
     def adjacent_cells(self, y, x):
         ajcells=[-1,0,1]
         for ajy in ajcells:
             for ajx in ajcells:
                 if ajx == 0 and ajy == 0:
                     continue
-                ny, nx =  y+ ajy, x + ajx
+                nx= x +ajx
+                ny=  y+ ajy
                 if self.in_bounds(ny, nx):
                     yield (ny, nx)
-
-    def is_active(self, i, j):
-        return self.grid[i][j] > 0
+    
+    #checks if a cell is active
+    def is_active(self, y, x):
+        return self.grid[y][x] > 0
 
     def moves(self):
-        for i in range(self.rows):
-            for j in range(self.cols):
-                if self.grid[i][j] > 0:
+        for y in range(self.rows):
+            for x in range(self.cols):
+                if self.grid[y][x] > 0:
                     new_grid = deepcopy(self.grid)
-                    new_grid[i][j] -= 1
+                    new_grid[y][x] -= 1
                     yield State(new_grid)
 
-    def makemove(self,x,y):
+    def makemove(self,y,x):
         self.grid[y][x]-=1
         return
 
