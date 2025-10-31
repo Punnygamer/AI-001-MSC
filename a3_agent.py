@@ -20,7 +20,7 @@ import random
 
 from functools import lru_cache
 
-from a1_state import state
+from a1_state import State
 
  
 
