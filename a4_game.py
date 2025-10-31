@@ -76,7 +76,7 @@ def play(st, agentA, agentB, modeA="alphabeta", modeB="alphabeta", time_limit=60
         else:
             return False
         
-    #---
+    
 
 
     print("Initial State:")
@@ -171,15 +171,15 @@ def play(st, agentA, agentB, modeA="alphabeta", modeB="alphabeta", time_limit=60
 
         f.write("\n GAME OVER \n")
         if winner:
-            f.write(f"Winner: Player {winner}\n")
+            f.write(f"Winner: Player ",winner,"\n")
         else:
             f.write("Result: Draw\n")
             
 
-    print("\n ------GAME OVER------- ")
+    print("\n GAME OVER")
     
     if winner:
-        print(f"Winner: Player {winner}")
+        print("Winner: Player ",winner)
         print()
         
     else:

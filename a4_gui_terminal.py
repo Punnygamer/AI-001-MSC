@@ -81,32 +81,32 @@ class HingerGamePygame:
         self.rows = self.current_state.rows
         self.cols = self.current_state.cols
 
-        # Game mode
+        #game mode
         self.mode = mode
         if mode == "human_vs_ai":
             self.ai_agent = agent((self.rows, self.cols), name="AI")
         else:
             self.ai_agent = None
 
-        # Game State tracking
+        #game state tracking
         self.current_player = "A"
         self.winner = None
         self.game_over = False
         self.move_history = []
         self.move_count = {"A": 0, "B": 0}
 
-        # UI State
+        #UI state
         self.hovered_cell = None
         self.show_hingers = False
         self.hinger_positions = []
 
-        # Calculate board position (centered)
+        #calculate board position
         board_width = self.cols * (CELL_SIZE + CELL_MARGIN) + CELL_MARGIN
         board_height = self.rows * (CELL_SIZE + CELL_MARGIN) + CELL_MARGIN
         self.board_x = 50
         self.board_y = 160
 
-        # Button definitions
+        #button definitions
         self.buttons = {
             'new_game': pygame.Rect(WINDOW_WIDTH - 180, 20, 160, 40),
             'show_hingers': pygame.Rect(WINDOW_WIDTH - 180, 70, 160, 40),
@@ -115,14 +115,14 @@ class HingerGamePygame:
 
         self.running = True
 
+    #gets a rectangle form the cell
     def get_cell_rect(self, row, col):
-        """Get the rectangle for a cell on the board"""
         x = self.board_x + col * (CELL_SIZE + CELL_MARGIN) + CELL_MARGIN
         y = self.board_y + row * (CELL_SIZE + CELL_MARGIN) + CELL_MARGIN
         return pygame.Rect(x, y, CELL_SIZE, CELL_SIZE)
-
+    
+    #gets the mouse position
     def get_cell_from_pos(self, pos):
-        """Get cell coordinates from mouse position"""
         mouse_x, mouse_y = pos
 
         for row in range(self.rows):
@@ -152,27 +152,20 @@ class HingerGamePygame:
                     self.hinger_positions.append((row, col))
 
     def make_move(self, row, col):
-        """
-        Make a move at the specified position
-        Returns True if move was successful, False otherwise
-        """
+
         if self.game_over:
             return False
 
-        # Check if move is legal
         if not (0 <= row < self.rows and 0 <= col < self.cols):
             return False
 
         if self.current_state.grid[row][col] <= 0:
             return False
 
-        # Check if it's a hinger BEFORE making the move
         is_hinger_move = self.is_hinger(row, col)
 
-        # Apply the move
         self.current_state.grid[row][col] -= 1
 
-        # Record move
         self.move_history.append({
             'player': self.current_player,
             'position': (row, col),
@@ -180,13 +173,11 @@ class HingerGamePygame:
         })
         self.move_count[self.current_player] += 1
 
-        # Check win condition
         if is_hinger_move:
             self.winner = self.current_player
             self.game_over = True
             return True
 
-        # Check if game is over (no moves left)
         has_moves = any(
             self.current_state.grid[i][j] > 0
             for i in range(self.rows)
@@ -194,17 +185,15 @@ class HingerGamePygame:
         )
 
         if not has_moves:
-            self.winner = None  # Draw
+            self.winner = None
             self.game_over = True
             return True
 
-        # Switch player
         self.current_player = 'B' if self.current_player == 'A' else 'A'
 
         return True
 
     def ai_move(self):
-        """Let AI make a move"""
         if self.ai_agent is None or self.game_over:
             return
 
@@ -214,7 +203,6 @@ class HingerGamePygame:
             self.make_move(row, col)
 
     def reset_game(self):
-        """Reset the game to initial State"""
         self.current_state = State(self.initial_grid)
         self.current_player = "A"
         self.winner = None
@@ -225,7 +213,6 @@ class HingerGamePygame:
         self.hinger_positions = []
 
     def toggle_mode(self):
-        """Toggle between Human vs Human and Human vs AI"""
         if self.mode == "human_vs_human":
             self.mode = "human_vs_ai"
             self.ai_agent = agent((self.rows, self.cols), name="AI")
@@ -235,13 +222,11 @@ class HingerGamePygame:
         self.reset_game()
 
     def draw_board(self):
-        """Draw the game board"""
         for row in range(self.rows):
             for col in range(self.cols):
                 rect = self.get_cell_rect(row, col)
                 cell_value = self.current_state.grid[row][col]
 
-                # Determine cell color
                 if self.show_hingers and (row, col) in self.hinger_positions:
                     color = COLOR_CELL_HINGER
                 elif self.hovered_cell == (row, col) and cell_value > 0:
@@ -251,23 +236,22 @@ class HingerGamePygame:
                 else:
                     color = COLOR_CELL_EMPTY
 
-                # Draw cell
+
                 pygame.draw.rect(self.screen, color, rect)
                 pygame.draw.rect(self.screen, COLOR_TEXT_DIM, rect, 2)
 
-                # Draw cell value
+
                 if cell_value > 0:
                     text = FONT_LARGE.render(str(cell_value), True, COLOR_TEXT)
                     text_rect = text.get_rect(center=rect.center)
                     self.screen.blit(text, text_rect)
 
     def draw_ui(self):
-        """Draw UI elements (title, stats, buttons)"""
-        # Title
+
         title = FONT_LARGE.render("Hinger Game", True, COLOR_TEXT)
         self.screen.blit(title, (20, 20))
 
-        # Game stats
+        #stats
         stats_y = 60
         regions = self.current_state.numRegions()
         hingers = self.current_state.numHingers()
@@ -282,7 +266,7 @@ class HingerGamePygame:
             surf = FONT_SMALL.render(text, True, COLOR_TEXT_DIM)
             self.screen.blit(surf, (20, stats_y + i * 25))
 
-        # Current player or game result
+        #player or game results
         status_y = self.board_y + self.rows * (CELL_SIZE + CELL_MARGIN) + 30
 
         if self.game_over:
@@ -299,26 +283,26 @@ class HingerGamePygame:
         status_surf = FONT_MEDIUM.render(status_text, True, status_color)
         self.screen.blit(status_surf, (self.board_x, status_y))
 
-        # Draw buttons
+        #buttons
         self.draw_button('new_game', "New Game")
         self.draw_button('show_hingers', "Show Hingers" if not self.show_hingers else "Hide Hingers")
         mode_text = "vs AI" if self.mode == "human_vs_human" else "vs Human"
         self.draw_button('mode_toggle', mode_text)
 
-        # Mode indicator
+        #mode indicator
         mode_display = "Human vs AI" if self.mode == "human_vs_ai" else "Human vs Human"
         mode_surf = FONT_SMALL.render(mode_display, True, COLOR_TEXT_DIM)
         self.screen.blit(mode_surf, (WINDOW_WIDTH - 180, 170))
 
-        # Move history
+        #move history
         history_y = 220
         history_title = FONT_SMALL.render("Move History:", True, COLOR_TEXT)
         self.screen.blit(history_title, (WINDOW_WIDTH - 180, history_y))
 
-        # Show last 10 moves
+        #show last 10 moves
         start_idx = max(0, len(self.move_history) - 10)
         for i, move in enumerate(self.move_history[start_idx:]):
-            # Display "AI" instead of "B" when in AI mode
+            #display "AI" instead of "B" when in ai mode
             player_name = move['player']
             if self.mode == "human_vs_ai" and player_name == 'B':
                 player_name = "AI"
@@ -330,11 +314,10 @@ class HingerGamePygame:
             self.screen.blit(move_surf, (WINDOW_WIDTH - 170, history_y + 25 + i * 20))
 
     def draw_button(self, button_name, text):
-        """Draw a button"""
         rect = self.buttons[button_name]
         mouse_pos = pygame.mouse.get_pos()
 
-        # Check hover
+        #checking hover
         if rect.collidepoint(mouse_pos):
             color = COLOR_BUTTON_HOVER
         else:
@@ -348,8 +331,7 @@ class HingerGamePygame:
         self.screen.blit(text_surf, text_rect)
 
     def handle_click(self, pos):
-        """Handle mouse click"""
-        # Check button clicks
+        #checking for clicks
         for button_name, rect in self.buttons.items():
             if rect.collidepoint(pos):
                 if button_name == 'new_game':
@@ -364,32 +346,32 @@ class HingerGamePygame:
                     self.toggle_mode()
                 return
 
-        # Check board clicks
+        #checking board clicks
         if not self.game_over:
             cell = self.get_cell_from_pos(pos)
             if cell:
                 row, col = cell
                 success = self.make_move(row, col)
 
-                # If in AI mode and move was successful, let AI move
+                #lets the ai move if its in ai mode
                 if success and self.mode == "human_vs_ai" and self.current_player == 'B' and not self.game_over:
-                    pygame.time.wait(500)  # Small delay for better UX
+                    pygame.time.wait(500)  
                     self.ai_move()
 
     def run(self):
-        """Main game loop"""
+        #Main game loop
         while self.running:
             # Event handling
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1:  # Left click
+                    if event.button == 1:
                         self.handle_click(event.pos)
                 elif event.type == pygame.MOUSEMOTION:
                     self.hovered_cell = self.get_cell_from_pos(event.pos)
 
-            # Drawing
+            # drawing the screen
             self.screen.fill(COLOR_BG)
             self.draw_board()
             self.draw_ui()
@@ -431,10 +413,10 @@ def main():
     print("Starting GUI application...")
     print()
 
-    # Choose grid (can be modified)
+    #choice of a grid
     grid = PRESET_GRIDS['4x4_default']
 
-    # Create and run game
+    #create and run the game
     game = HingerGamePygame(initial_grid=grid, mode="human_vs_human")
     game.run()
 
