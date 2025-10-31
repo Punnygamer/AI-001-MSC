@@ -1,0 +1,8 @@
+Hinger Game Log
+====================
+Turn 1: Player A -> (0, 0)
+Turn 2: Player B -> (0, 2)
+Turn 3: Player A -> (1, 1)
+
+=== GAME OVER ===
+Winner: Player A

@@ -15,7 +15,7 @@ Student Name: Maiusana Suthesan
 from copy import deepcopy
 import random
 from functools import lru_cache
-from a1_state import state
+from a1_state import State
  
 # initialising the two parameters (Q.a)
 class agent:
@@ -248,13 +248,13 @@ def tester():
     print("Test 2: AI Move Selection with Different Strategies")
  
 
-    # Create a test game state
+    # Create a test game State
     test_grid = [
         [1, 0, 1],
         [0, 1, 0],
         [1, 0, 1]
     ]
-    state1 = state(test_grid)
+    state1 = State(test_grid)
     
     print("Game State:")
     print(state1)
@@ -299,7 +299,7 @@ def tester():
         [0, 0, 1, 1, 1],
         [0, 0, 0, 1, 1]
     ]
-    large_state = state(large_grid)
+    large_state = State(large_grid)
     large_agent = agent((4, 5), name="LargeBot")
 
     print("Large Game State:")
@@ -313,7 +313,7 @@ def tester():
 
     print("Test 5: No Valid Moves")
     empty_grid = [[0, 0], [0, 0]]
-    empty_state = state(empty_grid)
+    empty_state = State(empty_grid)
 
     move_empty = agent1.move(empty_state, mode='minimax')
     print(f"Result: {move_empty}")
@@ -326,10 +326,10 @@ def tester():
 
     if hasattr(agent1, 'win'):
         win_grid = [[1]]
-        win_state = state(win_grid)
+        win_state = State(win_grid)
 
         is_winning = agent1.win(win_state)
-        print(f"Single cell state - Is winning position? {is_winning}")
+        print(f"Single cell State - Is winning position? {is_winning}")
         print(f"Expected:True or False depending on game theory analysis")
     else:
         print("win() method not implemented (optional bonus task)")

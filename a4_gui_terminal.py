@@ -19,7 +19,7 @@ from copy import deepcopy
 _stdout = sys.stdout
 sys.stdout = open(os.devnull, 'w')
 try:
-    from a1_state import state
+    from a1_state import State
     from a3_agent import agent
 finally:
     sys.stdout.close()
@@ -77,7 +77,7 @@ class HingerGamePygame:
             ]
 
         self.initial_grid = deepcopy(initial_grid)
-        self.current_state = state(initial_grid)
+        self.current_state = State(initial_grid)
         self.rows = self.current_state.rows
         self.cols = self.current_state.cols
 
@@ -88,14 +88,14 @@ class HingerGamePygame:
         else:
             self.ai_agent = None
 
-        # Game state tracking
+        # Game State tracking
         self.current_player = "A"
         self.winner = None
         self.game_over = False
         self.move_history = []
         self.move_count = {"A": 0, "B": 0}
 
-        # UI state
+        # UI State
         self.hovered_cell = None
         self.show_hingers = False
         self.hinger_positions = []
@@ -140,7 +140,7 @@ class HingerGamePygame:
         base_regions = self.current_state.numRegions()
         temp_grid = deepcopy(self.current_state.grid)
         temp_grid[row][col] = 0
-        temp_state = state(temp_grid)
+        temp_state = State(temp_grid)
         return temp_state.numRegions() > base_regions
 
     def update_hinger_positions(self):
@@ -214,8 +214,8 @@ class HingerGamePygame:
             self.make_move(row, col)
 
     def reset_game(self):
-        """Reset the game to initial state"""
-        self.current_state = state(self.initial_grid)
+        """Reset the game to initial State"""
+        self.current_state = State(self.initial_grid)
         self.current_player = "A"
         self.winner = None
         self.game_over = False
