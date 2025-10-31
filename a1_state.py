@@ -104,6 +104,8 @@ class State():
         return regions
     
 
+    '''function that finds the number of hingers by removing a value from an active cell iterating through every active cell
+    and then finding if the amount of regions have increased'''
     def numHingers(self):
         count = 0
         regions = self.numRegions()
@@ -111,7 +113,7 @@ class State():
         for i in range(self.rows):
             for j in range(self.cols):
                 if self.grid[i][j] == 1:
-                    # Simulate removing this cell
+                    # Simulate removing this cell for every cell
                     ngrid = deepcopy(self.grid)
                     ngrid[i][j] = 0
                     nstate = State(ngrid)
@@ -121,24 +123,20 @@ class State():
                         count += 1
         return count
     
+    '''returns a tupple of the grid'''
     def to_tuple(self):
-        result = []
-        for row in self.grid:
-            new_row = []
-            for val in row:
-                new_row.append(val)
-            result.append(tuple(new_row))
+        result=deepcopy(self.grid)
         return tuple(result)
 
 
-def tester():
+def statetest():
     print("State Class test")
 
     sa_grid = [
         [0, 1, 0, 0, 1],
         [1, 1, 0, 0, 0],
         [0, 1, 1, 1, 0],
-        [0, 0, 0, 0, 0],
+        [1, 0, 0, 0, 0],
     ]
 
     sa = State(sa_grid)
@@ -154,4 +152,4 @@ def tester():
     print("\nTest completed.")
 
 if __name__ == "__main__":
-    tester()
+    statetest()

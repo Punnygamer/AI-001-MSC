@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
 """
 Hinger Project
 Coursework 001 for: CMP-7058A Artificial Intelligence

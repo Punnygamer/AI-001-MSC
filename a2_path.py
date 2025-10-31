@@ -58,7 +58,7 @@ def path_BFS(start,end):
                 queue.append((next_state, path + [key]))
     return None
 
-
+#the depth first search algorithm
 def path_DFS(start,end):
     if safe(start)==False or safe(end)==False:
         return None
