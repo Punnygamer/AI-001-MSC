@@ -132,23 +132,24 @@ class HingerGamePygame:
                     return (row, col)
         return None
 
-    def is_hinger(self, row, col):
-        """Check if a cell is a hinger"""
+    def checkHinger(self, row, col):
         if self.current_state.grid[row][col] != 1:
             return False
 
-        base_regions = self.current_state.numRegions()
-        temp_grid = deepcopy(self.current_state.grid)
+        base_regions= self.current_state.numRegions()
+        temp_grid= deepcopy(self.current_state.grid)
         temp_grid[row][col] = 0
-        temp_state = State(temp_grid)
-        return temp_state.numRegions() > base_regions
+        temp_state= State(temp_grid)
+        if temp_state.numRegions() > base_regions:
+            return True
+        else:
+            return False
 
     def update_hinger_positions(self):
-        """Update the list of hinger positions"""
         self.hinger_positions = []
         for row in range(self.rows):
             for col in range(self.cols):
-                if self.is_hinger(row, col):
+                if self.checkHinger(row, col):
                     self.hinger_positions.append((row, col))
 
     def make_move(self, row, col):
@@ -162,18 +163,18 @@ class HingerGamePygame:
         if self.current_state.grid[row][col] <= 0:
             return False
 
-        is_hinger_move = self.is_hinger(row, col)
+        checkHinger_move = self.checkHinger(row, col)
 
         self.current_state.grid[row][col] -= 1
 
         self.move_history.append({
             'player': self.current_player,
             'position': (row, col),
-            'was_hinger': is_hinger_move
+            'was_hinger': checkHinger_move
         })
         self.move_count[self.current_player] += 1
 
-        if is_hinger_move:
+        if checkHinger_move:
             self.winner = self.current_player
             self.game_over = True
             return True
