@@ -13,8 +13,9 @@ Includes a State class for Task 1
 
 from copy import deepcopy
 from collections import deque
-
+#state class basically the underlying logic of the game
 class State():
+    #a initialiser that creates a grid from an input of a 2d array
     def __init__(self, grid):
         self.grid = deepcopy(grid)
         self.rows = len(grid)
@@ -23,6 +24,7 @@ class State():
         else:
             self.cols = 0
     
+    #string method that outputs the current grid
     def __str__(self):
         string=""
         for rows in self.grid:
@@ -30,18 +32,24 @@ class State():
                 string+=str(cell)+" "
             string+="\n"
         return string
-
-    def in_bounds(self, i, j):
-        return 0 <= i < self.rows and 0 <= j < self.cols
-
-    def adjacent_cells(self, i, j):
-        for di in [-1, 0, 1]:
-            for dj in [-1, 0, 1]:
-                if di == 0 and dj == 0:
+    
+    #checks to see if the coordinates is in bounds
+    def in_bounds(self, y, x):
+        if 0 <= y < self.rows and 0 <= x < self.cols:
+            return True
+        else:
+            return False
+    
+    #returns all cells ajacent to the coordinates of the current one
+    def adjacent_cells(self, y, x):
+        ajcells=[-1,0,1]
+        for ajy in ajcells:
+            for ajx in ajcells:
+                if ajx == 0 and ajy == 0:
                     continue
-                ni, nj = i + di, j + dj
-                if self.in_bounds(ni, nj):
-                    yield (ni, nj)
+                ny, nx =  y+ ajy, x + ajx
+                if self.in_bounds(ny, nx):
+                    yield (ny, nx)
 
     def is_active(self, i, j):
         return self.grid[i][j] > 0
