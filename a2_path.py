@@ -36,17 +36,17 @@ def path_BFS(start,end):
     if safe(start) == False or safe(end)== False:
         return None
 
-    start_tup = tuplestate(start)
-    end_tup = tuplestate(end)
+    stup = tuplestate(start)
+    etup = tuplestate(end)
 
-    queue = deque([(start, [start_tup])])
-    visited = {start_tup}
+    queue = deque([(start, [stup])])
+    visited = {stup}
 
     while queue:
         item = queue.popleft()
         current = item[0]
         path = item[1]
-        if tuplestate(current) == end_tup:
+        if tuplestate(current) == etup:
             return path
 
         for next_state in current.moves():
@@ -63,8 +63,8 @@ def path_DFS(start,end):
     if safe(start)==False or safe(end)==False:
         return None
 
-    start_tup = tuplestate(start)
-    end_tup = tuplestate(end)
+    stup = tuplestate(start)
+    etup = tuplestate(end)
     visited = set()
 
     def dfs(current, path):
@@ -73,7 +73,7 @@ def path_DFS(start,end):
             return None
         visited.add(key)
 
-        if key == end_tup:
+        if key == etup:
             return path
 
         for next_state in current.moves():
@@ -84,22 +84,22 @@ def path_DFS(start,end):
                 return result
         return None
 
-    return dfs(start, [start_tup])
+    return dfs(start, [stup])
 
-def path_IDDFS(start,end,max_depth=10):
+def path_IDDFS(start,end, maxdepth=50):
     if safe(start)==False or safe(end)==False:
         return None
 
-    start_tup = tuplestate(start)
-    end_tup = tuplestate(end)
+    stup = tuplestate(start)
+    etup = tuplestate(end)
 
-    def dls(current,end_tup,depth,path,visited):
+    def dls(current,etup,depth,path,visited):
         key = tuplestate(current)
         if key in visited:
             return None
         visited.add(key)
 
-        if key ==end_tup:
+        if key ==etup:
             return path
         if depth == 0:
             return None
@@ -107,15 +107,15 @@ def path_IDDFS(start,end,max_depth=10):
         for next_state in current.moves():
             if safe(next_state)==False:
                 continue
-            result = dls(next_state, end_tup, depth - 1,
+            result = dls(next_state, etup, depth - 1,
                          path + [tuplestate(next_state)], visited)
             if result:
                 return result
         return None
 
-    for limit in range(max_depth + 1):
+    for limit in range(maxdepth + 1):
         visited = set()
-        result = dls(start, end_tup, limit, [start_tup], visited)
+        result = dls(start, etup, limit, [stup], visited)
         if result:
             return result
     return None
@@ -187,7 +187,7 @@ def compare():
               f"Time: {(t1 - t0)*1000:7.2f} ms")
     print("//////////////////////////////////////////////////////////////////////////////")
 
-def tester():
+def pathtester():
     print("=== Hinger Path Tester ===")
     grid_start = [
         [1, 1, 0],
@@ -226,4 +226,4 @@ def tester():
 
 
 if __name__ == "__main__":
-    tester()
+    pathtester()

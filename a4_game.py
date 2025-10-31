@@ -14,7 +14,7 @@ Student Name: Maiusana Suthesan
 import time
 from copy import deepcopy
 from a3_agent import agent
-from a1_state import state
+from a1_state import State
 
 
 def is_legal_move(st, move):
@@ -31,9 +31,9 @@ def is_legal_move(st, move):
 def play(st, agentA, agentB, modeA="alphabeta", modeB="alphabeta", time_limit=60, log_file="game_log.txt"):
     
     if hasattr(st, "grid"):
-        current_state = state(st.grid)
+        current_state = State(st.grid)
     else:
-        current_state = state(st)
+        current_state = State(st)
 
     move_history = []
     total_time = {"A": 0.0, "B": 0.0}
@@ -48,7 +48,7 @@ def play(st, agentA, agentB, modeA="alphabeta", modeB="alphabeta", time_limit=60
         current_regions = state_obj.numRegions()
         new_grid = deepcopy(state_obj.grid)
         new_grid[r][c] = 0
-        new_state = state(new_grid)
+        new_state = State(new_grid)
         new_regions = new_state.numRegions()
         return new_regions > current_regions
 
@@ -75,7 +75,7 @@ def play(st, agentA, agentB, modeA="alphabeta", modeB="alphabeta", time_limit=60
     def game_over():
         return len(available_moves()) == 0
 
-    print("Initial state:")
+    print("Initial State:")
     print(current_state)
 
     turn = 0
@@ -182,7 +182,7 @@ def tester():
         [1, 1, 1, 1]
     ]
 
-    state1 = state(grid1)
+    state1 = State(grid1)
     agentA = agent((3, 4), name="AgentA")
     agentB = agent((3, 4), name="AgentB")
 
